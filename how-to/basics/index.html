@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <title>Vue.js Basics</title>
+</head>
+<body>
+    <div id="app">
+        <h1 v-once>{{title3}}</h1>
+        <input type="text" v-model="title1" @input="changeTitle">
+        <p v-html="finishedLink"></p>
+        <p>{{title1}} - <a :href="link" target="_blank">Google</a></p>
+        <p>{{title2}}</p>
+        <p>{{sayHello()}}</p>
+        <button @click="increase(2, $event)">Click me</button>
+        <p>{{counter}}</p>
+        <button @click="counter++">Click me</button>
+        <p>{{counter * 2 > 10 ? 'Greate than 10' : 'Small than 10'}}</p>
+        <p @mousemove="updateCoordinates">
+            Coordinates: {{x}} / {{y}}
+            - <span @mousemove="dummy">DEAD SPOT 1</span>
+            - <span @mousemove.stop="">DEAD SPOT 2</span>
+        </p>
+        <input type="text" @keyup.enter="alertMe">
+        <p></p>
+        <button @click="count++">Increase</button><button @click="count--">Decrease</button><button @click="secondCount++">Increase Second</button>
+        <p>{{count}} | {{secondCount}}</p>
+        <p>{{result()}} | {{output}}</p>
+        <div class="demo"
+                @click="attachedRed = !attachedRed"
+                :class="{red: attachedRed}"></div>
+        <div class="demo"
+                :class="divClasses"></div>
+        <div class="demo"
+                :class="[color, {red: attachedRed}]"></div>
+        <input type="text" v-model="color">
+        <hr>
+        <div class="demo"
+                :style="{backgroundColor: color}"></div>
+        <div class="demo"
+                :style="myStyles"></div>
+            <div class="demo"
+                :style="[myStyles, {height: width + 'px'}]"></div>
+        <input type="text" v-model="color">
+        <input type="text" v-model="width">
+        <hr>
+        <p v-if="show">You can see me! <span>Hello!</span></p>
+        <p v-else>You also see me...</p>
+        <p v-show="show">Do you also see me?</p>
+        <button @click="show = !show">Switch</button>
+        <hr>
+        <ul>
+            <li v-for="ingredient in ingredients" :key="ingredient">
+            {{ingredient}}
+            </li>
+        </ul>
+        <button @click='updateArr'>Update Arr</button>
+        <ul>
+            <li v-for="(ingredient, i) in ingredients" :key="ingrident">
+            {{ingredient}} ({{i}})
+            </li>
+        </ul>
+        <ul>
+            <li v-for="person in persons" :key="person">
+            <div v-for="(value, key, index) in person" :key="value.name">
+                {{key}}: {{value}} ({{index}})</div>
+            </li>
+        </ul>
+        <button @click="updateObj">UpdateObj</button>
+        <button @click="addObj">AddObj</button>
+        <span v-for="n in 10">{{n}} </span>
+        <template v-for="(ingredient, i) in ingredients" :key="ingrident">
+            <h3>{{ingredient}}</h3>
+            <p>{{i}}</p>
+        </template>
+    </div>
+        
+    <h3>Vue Bindings list:</h3>
+    <ul>
+        <li>:href</li>
+        <li>:class</li>
+        <li>:style</li>
+        <li>:key</li>
+    </ul>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                title1: "Hello 1",
+                title2: "Hello 2",
+                title3: "Hello 3",
+                link: "https://google.com",
+                finishedLink: '<a href="https://google.com" target="_blank">Google</a>',
+                counter: 0,
+                x: 0,
+                y: 0,
+                count: 0,
+                secondCount: 0,
+                attachedRed: false,
+                color: "green",
+                width: 100,
+                show: true,
+                ingredients: ['meat', 'fruit', 'cookies'],
+                persons: {
+                  0: {name: 'Max', age: 27, color: 'red'},
+                  1: {name: 'Anna', age: 'unknown', color: 'blue'}
+                }
+              },
+              computed: {
+                output: function() {
+                  return this.count > 5 ? 'Great than 5' : 'Small than 5';
+                },
+                divClasses: function() {
+                  return {
+                    red: this.attachedRed,
+                    green: !this.attachedRed
+                  };
+                },
+                myStyles: function() {
+                  return {
+                    backgroundColor: this.color,
+                    width: this.width + 'px'
+                  };
+                }
+              },
+              watch: {
+                count: function(value) {
+                  let vm = this;
+                  setTimeout(function(){
+                    vm.count = 0;
+                  }, 2000);
+                }
+              },
+              methods: {
+                  changeTitle: function(event) {
+                    this.title2 = event.target.value;
+                },
+                sayHello: function() {
+                  this.title3 = 'Hellooo';
+                  return this.title3;
+                },
+                increase: function(step, event) {
+                  this.counter+=step;
+                },
+                updateCoordinates: function(event) {
+                  this.x = event.clientX;
+                  this.y = event.clientY;
+                },
+                dummy: function(event) {
+                  event.stopPropagation();
+                },
+                alertMe: function(event) {
+                  alert(event.target.value);
+                },
+                result: function() {
+                  return this.count > 5 ? 'Great than 5' : 'Small than 5';
+                },
+                updateArr: function() {
+                  this.$set(this.ingredients, 0, 'veg');
+                  //vm.$set(vm.items, indexOfItem, newValue)
+                  //or
+                  //Vue.set(vm.items, indexOfItem, newValue)
+                  Vue.set(this.ingredients, 0, 'veg');
+                  //or
+                  //vm.items.splice(indexOfItem, 1, newValue)
+                  this.ingredients.splice(0, 1, 'veg')
+                  //to change the length
+                  //vm.items.splice(newLength)
+                },
+                updateObj: function() {
+                  Vue.set(this.persons["0"], 'age', 30);
+                  //or
+                  this.$set(this.persons["0"], 'age', 31)
+                },
+                addObj: function() {
+                  Vue.set(this.persons["0"], 'result', 5);
+                  //or
+                  this.$set(this.persons["0"], 'result', 6)
+                  //or
+                  this.persons["0"] = Object.assign({}, this.persons["0"], {
+                    result: 6,
+                    pass: true
+                  })
+                }
+              }
+            });
+    </script>
+    <style>
+        .demo {
+            width: 100px;
+            height: 100px;
+            background-color: gray;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .red {
+            background-color: red;
+        }
+        
+        .green {
+            background-color: green;
+        }
+        
+        .blue {
+            background-color: blue;
+        }
+    </style>
+</body>
+</html>
