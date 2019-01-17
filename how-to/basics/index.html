@@ -53,18 +53,18 @@
         <button @click="show = !show">Switch</button>
         <hr>
         <ul>
-            <li v-for="ingredient in ingredients" :key="ingredient">
+            <li v-for="ingredient in ingredients">
             {{ingredient}}
             </li>
         </ul>
         <button @click='updateArr'>Update Arr</button>
         <ul>
-            <li v-for="(ingredient, i) in ingredients" :key="ingrident">
+            <li v-for="(ingredient, i) in ingredients">
             {{ingredient}} ({{i}})
             </li>
         </ul>
         <ul>
-            <li v-for="person in persons" :key="person">
+            <li v-for="person in persons">
             <div v-for="(value, key, index) in person" :key="value.name">
                 {{key}}: {{value}} ({{index}})</div>
             </li>
@@ -72,10 +72,22 @@
         <button @click="updateObj">UpdateObj</button>
         <button @click="addObj">AddObj</button>
         <span v-for="n in 10">{{n}} </span>
-        <template v-for="(ingredient, i) in ingredients" :key="ingrident">
+        <template v-for="(ingredient, i) in ingredients">
             <h3>{{ingredient}}</h3>
             <p>{{i}}</p>
         </template>
+    </div>
+
+    <div id="vueGlobalComp">
+        <my-global-comp></my-global-comp>
+        <hr>
+        <my-global-comp></my-global-comp>
+    </div>
+
+    <div id="vueLocalComp">
+        <my-local-comp></my-local-comp>
+        <hr>
+        <my-local-comp></my-local-comp>
     </div>
         
     <h3>Vue Bindings list:</h3>
@@ -189,6 +201,44 @@
                 }
               }
             });
+    
+        Vue.component('my-global-comp', {
+            data() {
+                return {
+                    globalStatus: "Global success!"
+                }
+            },
+            template: '<p>Global component status: {{globalStatus}} (<button @click="changeStatus">Change</button>)</p>',
+            methods: {
+                changeStatus: function() {
+                    this.globalStatus = 'Global Error';
+                }
+            }
+        })
+        new Vue({
+            el: "#vueGlobalComp"
+        })
+
+        var myLocalComp = {
+            data() {
+                return {
+                    localStatus: 'Local Success'
+                }
+            },
+            template: '<p>Local component status: {{localStatus}} (<button @click="changeStatus">Change</button>)</p>',
+            methods: {
+                changeStatus: function() {
+                    this.localStatus = 'Local Error';
+                }
+            }
+        }
+
+        new Vue({
+            el: "#vueLocalComp",
+            components: {
+                'my-local-comp': myLocalComp
+            }
+        })
     </script>
     <style>
         .demo {
